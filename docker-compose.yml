@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: bookreader
+      POSTGRES_USER: bookuser
+      POSTGRES_PASSWORD: bookpass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - bookreader-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://bookuser:bookpass@db:5432/bookreader
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    volumes:
+      - ./models:/models
+      - ./uploads:/app/uploads
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    # GPU support (uncomment if you have NVIDIA GPU and Docker GPU support)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           capabilities: [gpu]
+    networks:
+      - bookreader-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - bookreader-network
+
+volumes:
+  postgres_data:
+
+networks:
+  bookreader-network:
+    driver: bridge 
