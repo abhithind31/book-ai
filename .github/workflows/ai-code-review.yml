@@ -1,0 +1,48 @@
+# .github/workflows/ai-code-review.yml
+name: AI Code Review
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  review:
+    # Run only if comment is on a PR and starts with the trigger command
+    if: startsWith(github.event.comment.body, '/ai-review') && github.event.issue.pull_request
+    runs-on: ubuntu-latest
+    # Permissions needed by the action to read code and write comments
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: read
+
+    steps:
+      # IMPORTANT: Checkout the code so the action can access config files (e.g., ai-reviewer.yml)
+      - name: Checkout code
+        uses: actions/checkout@v4
+        # Optional: Fetch the specific PR head commit if needed for pristine state
+        # ref: ${{ github.event.issue.pull_request.head.sha }}
+        # fetch-depth: 0 # Fetch full history if needed by other steps
+
+      - name: Run AI Review Bot Action
+        # Replace your-org/ai-review-bot with your actual org/repo name
+        # Replace @vX with the specific tag/branch/commit SHA you want to use
+        uses: abhithind31/ai-review-bot@v4 
+        with:
+          # Pass AWS secrets to the action
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # Required if using temporary credentials
+          aws-region: ${{ secrets.AWS_REGION }} # e.g., 'us-east-1' or set as secret
+          # --- JIRA Integration (Enabled by Default) --- 
+          # Provide these secrets unless Jira is disabled in the config file.
+          jira-url: ${{ secrets.JIRA_URL }}
+          jira-user-email: ${{ secrets.JIRA_USER_EMAIL }}
+          jira-api-token: ${{ secrets.JIRA_API_TOKEN }}
+          
+          # Optional: Override the default Bedrock model ID
+          # bedrock-model-id: 'anthropic.claude-v2:1'
+          # Optional: Override the default config file path
+          # config-path: '.github/my-custom-review-config.yml'
+          # Optional: Pass a specific GitHub token if needed (defaults to github.token)
+          # github-token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
