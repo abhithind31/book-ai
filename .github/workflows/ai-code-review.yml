@@ -41,7 +41,7 @@ jobs:
           #jira-api-token: ${{ secrets.JIRA_API_TOKEN }}
           
           # Optional: Override the default Bedrock model ID
-          bedrock-model-id: 'anthropic.claude-3-5-haiku-20241022-v1:0'
+          # bedrock-model-id: 'anthropic.claude-3-5-haiku-20241022-v1:0'
           # Optional: Override the default config file path
           # config-path: '.github/my-custom-review-config.yml'
           # Optional: Pass a specific GitHub token if needed (defaults to github.token)
