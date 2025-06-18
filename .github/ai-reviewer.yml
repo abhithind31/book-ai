@@ -1,0 +1,6 @@
+exclude:
+  - "*.md"
+  - "*.txt"
+
+jira:
+  enabled: true
