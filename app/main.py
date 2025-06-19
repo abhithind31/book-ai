@@ -9,8 +9,7 @@ from jose import JWTError, jwt
 from datetime import datetime, timedelta
 import logging
 
-# INTENTIONAL DEVIATION 1: Using a different JWT secret and algorithm than typically recommended
-JWT_SECRET = "not-so-secret-key-123"  # Should be random and secure
+JWT_SECRET = "not-so-secret-key-123" 
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRE_HOURS = 24
 
@@ -59,7 +58,6 @@ class UserLogin(BaseModel):
 class UserUpdate(BaseModel):
     email: EmailStr
     name: str
-    # INTENTIONAL DEVIATION 2: Adding phone field that wasn't in acceptance criteria
     phone: str = None
 
 class Token(BaseModel):
@@ -102,15 +100,13 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         raise HTTPException(status_code=401, detail="User not found")
     return user
 
-# INTENTIONAL DEVIATION 3: Different endpoint paths than specified in acceptance criteria
-@app.post("/register", response_model=UserResponse, status_code=201)  # Should be /api/users/register
+@app.post("/register", response_model=UserResponse, status_code=201)
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     # Check if user already exists
     existing_user = db.query(User).filter(User.email == user.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    # INTENTIONAL DEVIATION 4: Weak password validation (should be min 8 chars)
     if len(user.password) < 6:  # Should be 8 according to AC5
         raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
     
@@ -150,8 +146,7 @@ def get_profile(current_user: User = Depends(get_current_user)):
         created_at=current_user.created_at
     )
 
-# INTENTIONAL DEVIATION 5: Using PATCH instead of PUT as specified in AC4
-@app.patch("/profile")  # Should be PUT /api/users/profile 
+@app.patch("/profile")
 def update_profile(user_update: UserUpdate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     current_user.email = user_update.email
     current_user.name = user_update.name
@@ -170,7 +165,6 @@ def update_profile(user_update: UserUpdate, current_user: User = Depends(get_cur
         created_at=current_user.created_at
     )
 
-# INTENTIONAL DEVIATION 7: Adding an endpoint not mentioned in acceptance criteria
 @app.delete("/profile")
 def delete_profile(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     db.delete(current_user)
