@@ -107,7 +107,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    if len(user.password) < 6:  # Should be 8 according to AC5
+    if len(user.password) < 6:
         raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
     
     # Create new user
@@ -128,7 +128,7 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
         created_at=db_user.created_at
     )
 
-@app.post("/login", response_model=Token)  # Should be /api/auth/login
+@app.post("/login", response_model=Token)
 def login_user(user: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user.email).first()
     if not db_user or not verify_password(user.password, db_user.password_hash):
@@ -137,7 +137,7 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
     access_token = create_access_token(data={"sub": user.email})
     return Token(access_token=access_token, token_type="bearer")
 
-@app.get("/profile", response_model=UserResponse)  # Should be /api/users/profile
+@app.get("/profile", response_model=UserResponse)
 def get_profile(current_user: User = Depends(get_current_user)):
     return UserResponse(
         id=current_user.id,
@@ -150,7 +150,6 @@ def get_profile(current_user: User = Depends(get_current_user)):
 def update_profile(user_update: UserUpdate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     current_user.email = user_update.email
     current_user.name = user_update.name
-    # INTENTIONAL DEVIATION 6: Allowing phone update when AC4 said only email and name
     if user_update.phone:
         # This would need a phone column in the database, but we're not adding it
         pass  # Silently ignoring phone field
