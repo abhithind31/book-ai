@@ -19,7 +19,7 @@ jobs:
     steps:
       # IMPORTANT: Checkout the code so the action can access config files (e.g., ai-reviewer.yml)
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         # Optional: Fetch the specific PR head commit if needed for pristine state
         # ref: ${{ github.event.issue.pull_request.head.sha }}
         # fetch-depth: 0 # Fetch full history if needed by other steps
