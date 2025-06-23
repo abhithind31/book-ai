@@ -36,9 +36,9 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }} # e.g., 'us-east-1' or set as secret
           # --- JIRA Integration (Enabled by Default) --- 
           # Provide these secrets unless Jira is disabled in the config file.
-          jira_url: ${{ secrets.JIRA_URL }}
-          jira_user_email: ${{ secrets.JIRA_USER_EMAIL }}
-          jira_api_token: ${{ secrets.JIRA_API_TOKEN }}
+          jira-url: ${{ secrets.JIRA_URL }}
+          jira-user-email: ${{ secrets.JIRA_USER_EMAIL }}
+          jira-api-token: ${{ secrets.JIRA_API_TOKEN }}
           
           # Optional: Override the default Bedrock model ID
           # bedrock-model-id: 'anthropic.claude-3-5-haiku-20241022-v1:0'
