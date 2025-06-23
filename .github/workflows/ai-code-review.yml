@@ -27,7 +27,7 @@ jobs:
       - name: Run AI Review Bot Action
         # Replace your-org/ai-review-bot with your actual org/repo name
         # Replace @vX with the specific tag/branch/commit SHA you want to use
-        uses: abhithind31/ai-review-bot@v4 
+        uses: abhithind31/ai-review-bot@v5 
         with:
           # Pass AWS secrets to the action
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
